@@ -1,4 +1,4 @@
 # CodeView
-验证码输入框，帮朋友封装的效果，希望对大家有所帮助
+验证码输入，密码输入框封装
 
 ![image](https://github.com/MengLiMing/CodeView/blob/master/CodeView.gif)
