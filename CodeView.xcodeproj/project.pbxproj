@@ -16,7 +16,7 @@
 		0F1D1DE91CEC5D3E008FC24B /* CodeViewTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F1D1DE81CEC5D3E008FC24B /* CodeViewTests.m */; };
 		0F1D1DF41CEC5D3E008FC24B /* CodeViewUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F1D1DF31CEC5D3E008FC24B /* CodeViewUITests.m */; };
 		0F1D1E041CEC5D71008FC24B /* CodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F1D1E031CEC5D71008FC24B /* CodeView.m */; };
-		0F1D1E071CEC5DD9008FC24B /* UIView+Category.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F1D1E061CEC5DD9008FC24B /* UIView+Category.m */; };
+		0F2662131D0BC31800778A07 /* NSString+Category.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F2662121D0BC31800778A07 /* NSString+Category.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,8 +55,8 @@
 		0F1D1DF51CEC5D3E008FC24B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0F1D1E021CEC5D71008FC24B /* CodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeView.h; sourceTree = "<group>"; };
 		0F1D1E031CEC5D71008FC24B /* CodeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeView.m; sourceTree = "<group>"; };
-		0F1D1E051CEC5DD9008FC24B /* UIView+Category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Category.h"; sourceTree = "<group>"; };
-		0F1D1E061CEC5DD9008FC24B /* UIView+Category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Category.m"; sourceTree = "<group>"; };
+		0F2662111D0BC31800778A07 /* NSString+Category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Category.h"; sourceTree = "<group>"; };
+		0F2662121D0BC31800778A07 /* NSString+Category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Category.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -150,8 +150,8 @@
 		0F1D1E011CEC5D71008FC24B /* CodeView */ = {
 			isa = PBXGroup;
 			children = (
-				0F1D1E051CEC5DD9008FC24B /* UIView+Category.h */,
-				0F1D1E061CEC5DD9008FC24B /* UIView+Category.m */,
+				0F2662111D0BC31800778A07 /* NSString+Category.h */,
+				0F2662121D0BC31800778A07 /* NSString+Category.m */,
 				0F1D1E021CEC5D71008FC24B /* CodeView.h */,
 				0F1D1E031CEC5D71008FC24B /* CodeView.m */,
 			);
@@ -289,9 +289,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				0F1D1DD61CEC5D3E008FC24B /* ViewController.m in Sources */,
+				0F2662131D0BC31800778A07 /* NSString+Category.m in Sources */,
 				0F1D1DD31CEC5D3E008FC24B /* AppDelegate.m in Sources */,
 				0F1D1DD01CEC5D3E008FC24B /* main.m in Sources */,
-				0F1D1E071CEC5DD9008FC24B /* UIView+Category.m in Sources */,
 				0F1D1E041CEC5D71008FC24B /* CodeView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -518,6 +518,7 @@
 				0F1D1DFA1CEC5D3E008FC24B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		0F1D1DFB1CEC5D3E008FC24B /* Build configuration list for PBXNativeTarget "CodeViewTests" */ = {
 			isa = XCConfigurationList;
@@ -526,6 +527,7 @@
 				0F1D1DFD1CEC5D3E008FC24B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		0F1D1DFE1CEC5D3E008FC24B /* Build configuration list for PBXNativeTarget "CodeViewUITests" */ = {
 			isa = XCConfigurationList;
@@ -534,6 +536,7 @@
 				0F1D1E001CEC5D3E008FC24B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
