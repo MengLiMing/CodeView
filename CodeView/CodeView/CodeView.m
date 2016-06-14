@@ -164,7 +164,7 @@
     for (NSInteger i = 0; i < lineNum - 1; i ++) {
         CAShapeLayer *line = [CAShapeLayer layer];
         line.fillColor = linecolor.CGColor;
-        UIBezierPath *path = [UIBezierPath bezierPathWithRect:CGRectMake(self.frame.size.width/lineNum * (i + 1), 1, .5, self.frame.size.height)];
+        UIBezierPath *path = [UIBezierPath bezierPathWithRect:CGRectMake(self.frame.size.width/lineNum * (i + 1), 1, .5, self.frame.size.height - 1)];
         line.path = path.CGPath;
         line.hidden = NO;
         [self.layer addSublayer:line];
