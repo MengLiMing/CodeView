@@ -91,6 +91,10 @@
 
 #pragma mark - 添加通知
 - (void)addNotification {
+    //修复双击造成的bug
+    if (observer) {
+        [[NSNotificationCenter defaultCenter] removeObserver:observer];
+    }
     observer = [[NSNotificationCenter defaultCenter] addObserverForName:UITextFieldTextDidChangeNotification object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
         NSInteger length = _textField.text.length;
         if (length == lineNum && self.EndEditBlcok) {
