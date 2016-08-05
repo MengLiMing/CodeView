@@ -26,6 +26,9 @@ typedef NS_ENUM(NSInteger,CodeViewType) {
 //是否有下标线
 @property (nonatomic, assign) BOOL hasUnderLine;
 
+//是否需要输入之后清空，再次输入使用,默认为NO
+@property (nonatomic, assign) BOOL emptyEditEnd;
+
 - (instancetype)initWithFrame:(CGRect)frame
                           num:(NSInteger)num
                     lineColor:(UIColor *)lColor

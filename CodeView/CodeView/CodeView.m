@@ -30,7 +30,6 @@
     UIColor *textcolor;
     UIFont *textFont;
     
-    
     //观察者
     NSObject *observer;
     
@@ -61,6 +60,7 @@
         
         textFont = [UIFont boldSystemFontOfSize:font];
         
+        _emptyEditEnd = NO;
         //设置的字体高度小于self的高
         NSAssert(textFont.lineHeight < self.frame.size.height, @"设置的字体高度应该小于self的高");
         
@@ -97,14 +97,6 @@
     }
     observer = [[NSNotificationCenter defaultCenter] addObserverForName:UITextFieldTextDidChangeNotification object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
         NSInteger length = _textField.text.length;
-        if (length == lineNum && self.EndEditBlcok) {
-            self.EndEditBlcok(_textField.text);
-            [self endEdit];
-        }
-        if (length > lineNum) {
-            _textField.text = [_textField.text substringToIndex:lineNum];
-            [self endEdit];
-        }
         
         //改变数组，存储需要画的字符
         //通过判断textfield的长度和数组中的长度比较，选择删除还是添加
@@ -129,8 +121,40 @@
                 }
             }
         }
+        
+        if (length == lineNum && self.EndEditBlcok) {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                self.EndEditBlcok(_textField.text);
+                [self emptyAndDisplay];
+            });
+
+        }
+        if (length > lineNum) {
+            _textField.text = [_textField.text substringToIndex:lineNum];
+            [self emptyAndDisplay];
+
+        }
     }];
 }
+
+//置空 重绘
+- (void)emptyAndDisplay {
+    [self endEdit];
+    if (_emptyEditEnd) {
+        _textField.text = @"";
+        [textArray removeAllObjects];
+        [self setNeedsDisplay];
+    }
+
+    if (_hasSpaceLine) {
+        [self addSpaceLine];
+    }
+    
+    if (_hasUnderLine) {
+        [self addUnderLine];
+    }
+}
+
 
 //键盘弹出
 - (void)beginEdit {
