@@ -19,7 +19,7 @@
 //密码风格 圆点半径
 #define RADIUS 5
 
-@interface CodeView ()
+@interface CodeView () <UITextFieldDelegate>
 {
     NSMutableArray *textArray;
     
@@ -67,6 +67,7 @@
         //单击手势
         UITapGestureRecognizer *tapGes = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(beginEdit)];
         [self addGestureRecognizer:tapGes];
+
     }
     
     return self;
@@ -94,40 +95,29 @@
     //修复双击造成的bug
     if (observer) {
         [[NSNotificationCenter defaultCenter] removeObserver:observer];
-    }
+    }    
+    
     observer = [[NSNotificationCenter defaultCenter] addObserverForName:UITextFieldTextDidChangeNotification object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
         NSInteger length = _textField.text.length;
         
         //改变数组，存储需要画的字符
         //通过判断textfield的长度和数组中的长度比较，选择删除还是添加
-        if (length<=lineNum) {
-            if (length > textArray.count) {
-                [textArray addObject:[_textField.text substringWithRange:NSMakeRange(length - 1, 1)]];
-            } else {
-                [textArray removeLastObject];
-            }
-            //标记为需要重绘
-            [self setNeedsDisplay];
+        if (length > textArray.count) {
+            [textArray addObject:[_textField.text substringWithRange:NSMakeRange(length - 1, 1)]];
+        } else {
+            [textArray removeLastObject];
         }
         
-        if (_underlineArr.count > 0) {
-            //判断底部的view隐藏还是显示
-            for (NSInteger i = 0; i < lineNum; i ++) {
-                CAShapeLayer *obj = [_underlineArr objectAtIndex:i];
-                if (i < _textField.text.length) {
-                    obj.hidden = YES;
-                } else {
-                    obj.hidden = NO;
-                }
-            }
-        }
+        //标记为需要重绘
+        [self setNeedsDisplay];
+        
+        [self underLineHidden];
         
         if (length == lineNum && self.EndEditBlcok) {
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.05 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 self.EndEditBlcok(_textField.text);
                 [self emptyAndDisplay];
             });
-
         }
         if (length > lineNum) {
             _textField.text = [_textField.text substringToIndex:lineNum];
@@ -144,14 +134,20 @@
         _textField.text = @"";
         [textArray removeAllObjects];
         [self setNeedsDisplay];
+        [self underLineHidden];
     }
 
-    if (_hasSpaceLine) {
-        [self addSpaceLine];
-    }
-    
+}
+
+
+#pragma mark - 下划线是否隐藏
+- (void)underLineHidden {
     if (_hasUnderLine) {
-        [self addUnderLine];
+        //判断底部的view隐藏还是显示
+        for (NSInteger i = 0; i < lineNum; i ++) {
+            CAShapeLayer *obj = [_underlineArr objectAtIndex:i];
+            obj.hidden = i < textArray.count;
+        }
     }
 }
 
@@ -162,6 +158,7 @@
         _textField = [[UITextField alloc] init];
         _textField.keyboardType = UIKeyboardTypeNumberPad;
         _textField.hidden = YES;
+        _textField.delegate = self;
         [self addSubview:_textField];
     }
     [self addNotification];
@@ -174,14 +171,21 @@
     [self.textField resignFirstResponder];
 }
 
+#pragma mark - textfield
+- (void)textFieldDidEndEditing:(UITextField *)textField {
+    [self endEdit];
+}
+
+
 //添加下划线
 - (void)addUnderLine {
+    [self.underlineArr removeAllObjects];
     for (NSInteger i = 0; i < lineNum; i ++) {
         CAShapeLayer *line = [CAShapeLayer layer];
         line.fillColor = linecolor.CGColor;
         UIBezierPath *path = [UIBezierPath bezierPathWithRect:CGRectMake(Space * (2 *i + 1) + i * LineWidth, self.frame.size.height - LineBottomHeight, LineWidth, LineHeight)];
         line.path = path.CGPath;
-        line.hidden = NO;
+        line.hidden = textArray.count > i;
         [self.layer addSublayer:line];
         [self.underlineArr addObject:line];
     }
