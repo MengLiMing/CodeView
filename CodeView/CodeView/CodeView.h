@@ -29,6 +29,9 @@ typedef NS_ENUM(NSInteger,CodeViewType) {
 //是否需要输入之后清空，再次输入使用,默认为NO
 @property (nonatomic, assign) BOOL emptyEditEnd;
 
+//是否添加下划线的动画,默认NO
+@property (nonatomic, assign) BOOL underLineAnimation;
+
 - (instancetype)initWithFrame:(CGRect)frame
                           num:(NSInteger)num
                     lineColor:(UIColor *)lColor

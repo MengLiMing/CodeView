@@ -42,12 +42,13 @@
         switch (i) {
             case 0:
             {
-                //下划线
-                v.hasUnderLine = YES;
+//                //下划线
+//                v.hasUnderLine = YES;
                 //分割线
                 v.hasSpaceLine = YES;
                 //输入之后置空
                 v.emptyEditEnd = YES;
+                v.underLineAnimation = YES;
                 //输入风格
                 v.codeType = CodeViewTypeCustom;
             }

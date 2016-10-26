@@ -60,6 +60,8 @@
         
         textFont = [UIFont boldSystemFontOfSize:font];
         
+        
+        _underLineAnimation = NO;
         _emptyEditEnd = NO;
         //设置的字体高度小于self的高
         NSAssert(textFont.lineHeight < self.frame.size.height, @"设置的字体高度应该小于self的高");
@@ -73,13 +75,16 @@
     return self;
 }
 
+- (void)setUnderLineAnimation:(BOOL)underLineAnimation {
+    _underLineAnimation = underLineAnimation;
+    if (underLineAnimation && !_hasUnderLine) {
+        self.hasUnderLine = YES;
+    }
+}
+
 
 - (void)setHasSpaceLine:(BOOL)hasSpaceLine {
     _hasSpaceLine = hasSpaceLine;
-    if (hasSpaceLine) {
-        [self addSpaceLine];
-    }
-    
 }
 
 - (void)setHasUnderLine:(BOOL)hasUnderLine {
@@ -113,6 +118,10 @@
         
         [self underLineHidden];
         
+        [self addUnderLineAnimation];
+
+
+        
         if (length == lineNum && self.EndEditBlcok) {
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.05 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 self.EndEditBlcok(_textField.text);
@@ -136,6 +145,8 @@
         [self setNeedsDisplay];
         [self underLineHidden];
     }
+    
+    [self addUnderLineAnimation];
 
 }
 
@@ -189,6 +200,9 @@
         [self.layer addSublayer:line];
         [self.underlineArr addObject:line];
     }
+    
+    [self addUnderLineAnimation];
+
 }
 
 //添加分割线
@@ -256,6 +270,38 @@
 }
 
 
+
+#pragma mark - 有下划线时,下划线的动画
+- (void)addUnderLineAnimation {
+    if (_underLineAnimation) {
+        if (textArray.count >= lineNum) {
+            return;
+        }
+
+        
+        for (NSInteger i = 0; i < _underlineArr.count; i ++) {
+            CAShapeLayer *line = _underlineArr[i];
+            if (i == textArray.count) {
+                [line addAnimation:[self opacityAnimation] forKey:@"kOpacityAnimation"];
+            } else {
+                [line removeAnimationForKey:@"kOpacityAnimation"];
+            }
+        }
+    }
+}
+
+
+- (CABasicAnimation *)opacityAnimation {
+    CABasicAnimation *opacityAnimation = [CABasicAnimation animationWithKeyPath:@"opacity"];
+    opacityAnimation.fromValue = @(1.0);
+    opacityAnimation.toValue = @(0.0);
+    opacityAnimation.duration = .8;
+    opacityAnimation.repeatCount = HUGE_VALF;
+    opacityAnimation.removedOnCompletion = NO;
+    opacityAnimation.fillMode = kCAFillModeForwards;
+    opacityAnimation.timingFunction=[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];
+    return opacityAnimation;
+}
 
 
 @end
