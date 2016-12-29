@@ -108,7 +108,7 @@
         //改变数组，存储需要画的字符
         //通过判断textfield的长度和数组中的长度比较，选择删除还是添加
         if (length > textArray.count) {
-            [textArray addObject:[_textField.text substringWithRange:NSMakeRange(length - 1, 1)]];
+            [textArray addObject:[_textField.text substringWithRange:NSMakeRange(textArray.count, 1)]];
         } else {
             [textArray removeLastObject];
         }
