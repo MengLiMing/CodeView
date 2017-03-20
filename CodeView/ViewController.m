@@ -51,7 +51,6 @@
                 v.underLineAnimation = YES;
                 //输入风格
                 v.codeType = CodeViewTypeCustom;
-                v.underLine_center_y = v.frame.size.height/2;
             }
                 break;
             case 1:
