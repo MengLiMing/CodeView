@@ -61,6 +61,10 @@
         textFont = [UIFont boldSystemFontOfSize:font];
         
         
+        _underLine_center_y = frame.size.height - LineBottomHeight - LineHeight/2;
+        
+        self.textField.delegate = self;
+        
         _underLineAnimation = NO;
         _emptyEditEnd = NO;
         //设置的字体高度小于self的高
@@ -100,7 +104,10 @@
     //修复双击造成的bug
     if (observer) {
         [[NSNotificationCenter defaultCenter] removeObserver:observer];
-    }    
+    }
+
+    //开始输入
+    [self addUnderLineAnimation];
     
     observer = [[NSNotificationCenter defaultCenter] addObserverForName:UITextFieldTextDidChangeNotification object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
         NSInteger length = _textField.text.length;
@@ -179,6 +186,7 @@
 
 - (void)endEdit {
     [[NSNotificationCenter defaultCenter] removeObserver:observer];
+    [_underlineArr makeObjectsPerformSelector:@selector(removeAnimationForKey:) withObject:@"kOpacityAnimation"];
     [self.textField resignFirstResponder];
 }
 
@@ -194,14 +202,16 @@
     for (NSInteger i = 0; i < lineNum; i ++) {
         CAShapeLayer *line = [CAShapeLayer layer];
         line.fillColor = linecolor.CGColor;
-        UIBezierPath *path = [UIBezierPath bezierPathWithRect:CGRectMake(Space * (2 *i + 1) + i * LineWidth, self.frame.size.height - LineBottomHeight, LineWidth, LineHeight)];
+        UIBezierPath *path = [UIBezierPath bezierPathWithRect:CGRectMake(Space * (2 *i + 1) + i * LineWidth, _underLine_center_y - LineHeight/2, LineWidth, LineHeight)];
         line.path = path.CGPath;
         line.hidden = textArray.count > i;
         [self.layer addSublayer:line];
         [self.underlineArr addObject:line];
     }
     
-    [self addUnderLineAnimation];
+    if (!_noInputAni) {
+        [self addUnderLineAnimation];
+    }
 
 }
 
@@ -277,8 +287,6 @@
         if (textArray.count >= lineNum) {
             return;
         }
-
-        
         for (NSInteger i = 0; i < _underlineArr.count; i ++) {
             CAShapeLayer *line = _underlineArr[i];
             if (i == textArray.count) {

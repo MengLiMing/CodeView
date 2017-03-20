@@ -32,6 +32,15 @@ typedef NS_ENUM(NSInteger,CodeViewType) {
 //是否添加下划线的动画,默认NO
 @property (nonatomic, assign) BOOL underLineAnimation;
 
+
+//在underLineAnimation为YES时，未输入状态下是否闪烁，YES为闪烁 NO不闪烁
+@property (nonatomic, assign) BOOL noInputAni;;
+
+
+//下划线中心点
+@property (nonatomic, assign) CGFloat underLine_center_y;
+
+
 - (instancetype)initWithFrame:(CGRect)frame
                           num:(NSInteger)num
                     lineColor:(UIColor *)lColor
