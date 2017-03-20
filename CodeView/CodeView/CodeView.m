@@ -153,7 +153,9 @@
         [self underLineHidden];
     }
     
-    [self addUnderLineAnimation];
+    if (_noInputAni) {
+        [self addUnderLineAnimation];
+    }
 
 }
 
@@ -196,13 +198,26 @@
 }
 
 
+- (void)setUnderLine_center_y:(CGFloat)underLine_center_y {
+    _underLine_center_y = underLine_center_y;
+    for (CAShapeLayer *layer in _underlineArr) {
+        layer.frame = CGRectMake(CGRectGetMinX(layer.frame),
+                                 _underLine_center_y - LineHeight/2,
+                                 LineWidth,
+                                 LineHeight);
+    }
+    
+}
+
+
 //添加下划线
 - (void)addUnderLine {
     [self.underlineArr removeAllObjects];
     for (NSInteger i = 0; i < lineNum; i ++) {
         CAShapeLayer *line = [CAShapeLayer layer];
+        line.frame = CGRectMake(Space * (2 *i + 1) + i * LineWidth, _underLine_center_y - LineHeight/2, LineWidth, LineHeight);
         line.fillColor = linecolor.CGColor;
-        UIBezierPath *path = [UIBezierPath bezierPathWithRect:CGRectMake(Space * (2 *i + 1) + i * LineWidth, _underLine_center_y - LineHeight/2, LineWidth, LineHeight)];
+        UIBezierPath *path = [UIBezierPath bezierPathWithRect:line.bounds];
         line.path = path.CGPath;
         line.hidden = textArray.count > i;
         [self.layer addSublayer:line];
