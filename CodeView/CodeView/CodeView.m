@@ -89,6 +89,9 @@
 
 - (void)setHasSpaceLine:(BOOL)hasSpaceLine {
     _hasSpaceLine = hasSpaceLine;
+    if (hasSpaceLine) {
+        [self addSpaceLine];
+    }
 }
 
 - (void)setHasUnderLine:(BOOL)hasUnderLine {
