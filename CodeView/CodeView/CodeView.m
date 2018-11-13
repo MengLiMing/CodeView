@@ -19,22 +19,18 @@
 //密码风格 圆点半径
 #define RADIUS 5
 
-@interface CodeView () <UITextFieldDelegate>
+@interface CodeView ()
 {
     NSMutableArray *textArray;
     
     //线的条数
     NSInteger lineNum;
-
+    
     UIColor *linecolor;
     UIColor *textcolor;
     UIFont *textFont;
     
-    //观察者
-    NSObject *observer;
-    
 }
-@property (nonatomic,strong) UITextField *textField;
 @property (nonatomic, strong) NSMutableArray *underlineArr;
 @end
 
@@ -60,20 +56,14 @@
         
         textFont = [UIFont boldSystemFontOfSize:font];
         
-        
+        _text = @"";
         _underLine_center_y = frame.size.height - LineBottomHeight - LineHeight/2;
         
-        self.textField.delegate = self;
         
         _underLineAnimation = NO;
         _emptyEditEnd = NO;
         //设置的字体高度小于self的高
         NSAssert(textFont.lineHeight < self.frame.size.height, @"设置的字体高度应该小于self的高");
-        
-        //单击手势
-        UITapGestureRecognizer *tapGes = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(beginEdit)];
-        [self addGestureRecognizer:tapGes];
-
     }
     
     return self;
@@ -102,56 +92,46 @@
 }
 
 
-#pragma mark - 添加通知
-- (void)addNotification {
-    //修复双击造成的bug
-    if (observer) {
-        [[NSNotificationCenter defaultCenter] removeObserver:observer];
-    }
 
-    //开始输入
+- (void)setText:(NSString *)text {
+    textArray = [[self charArray:text] mutableCopy];
+    _text = [textArray componentsJoinedByString:@""];
+    
+    //标记为需要重绘
+    [self setNeedsDisplay];
+    [self underLineHidden];
     [self addUnderLineAnimation];
     
-    observer = [[NSNotificationCenter defaultCenter] addObserverForName:UITextFieldTextDidChangeNotification object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
-        NSInteger length = _textField.text.length;
-        
-        //改变数组，存储需要画的字符
-        //通过判断textfield的长度和数组中的长度比较，选择删除还是添加
-        if (length > textArray.count) {
-            [textArray addObject:[_textField.text substringWithRange:NSMakeRange(textArray.count, 1)]];
-        } else {
-            [textArray removeLastObject];
+    if (textArray.count < lineNum) {
+        if (self.changeEditBlock) {
+            self.changeEditBlock();
         }
-        
-        //标记为需要重绘
-        [self setNeedsDisplay];
-        
-        [self underLineHidden];
-        
-        [self addUnderLineAnimation];
-
-
-        
-        if (length == lineNum && self.EndEditBlcok) {
+    } else if (textArray.count == lineNum) {
+        if (self.EndEditBlcok) {
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.05 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                self.EndEditBlcok(_textField.text);
-                [self emptyAndDisplay];
+                self.EndEditBlcok(_text);
             });
         }
-        if (length > lineNum) {
-            _textField.text = [_textField.text substringToIndex:lineNum];
-            [self emptyAndDisplay];
+    }
+}
 
-        }
-    }];
+
+- (NSArray *)charArray:(NSString *)text {
+    NSMutableArray *array = [NSMutableArray array];
+    
+    NSInteger max = MIN(text.length, lineNum);
+    for (NSInteger i = 0; i < max; i ++) {
+        NSString *str = [text substringWithRange:NSMakeRange(i, 1)];
+        [array addObject:str];
+    }
+    return array;
 }
 
 //置空 重绘
 - (void)emptyAndDisplay {
-    [self endEdit];
+    _text = @"";
+    [textArray removeAllObjects];
     if (_emptyEditEnd) {
-        _textField.text = @"";
-        [textArray removeAllObjects];
         [self setNeedsDisplay];
         [self underLineHidden];
     }
@@ -159,9 +139,19 @@
     if (_noInputAni) {
         [self addUnderLineAnimation];
     }
-
+    
 }
 
+- (void)emptyCodeView {
+    _text = @"";
+    [textArray removeAllObjects];
+    [self setNeedsDisplay];
+    [self underLineHidden];
+    
+    if (_noInputAni) {
+        [self addUnderLineAnimation];
+    }
+}
 
 #pragma mark - 下划线是否隐藏
 - (void)underLineHidden {
@@ -177,28 +167,15 @@
 
 //键盘弹出
 - (void)beginEdit {
-    if (_textField == nil) {
-        _textField = [[UITextField alloc] init];
-        _textField.keyboardType = UIKeyboardTypeNumberPad;
-        _textField.hidden = YES;
-        _textField.delegate = self;
-        [self addSubview:_textField];
-    }
-    [self addNotification];
-    [self.textField becomeFirstResponder];
+    [self addUnderLineAnimation];
     
 }
 
+
 - (void)endEdit {
-    [[NSNotificationCenter defaultCenter] removeObserver:observer];
     [_underlineArr makeObjectsPerformSelector:@selector(removeAnimationForKey:) withObject:@"kOpacityAnimation"];
-    [self.textField resignFirstResponder];
 }
 
-#pragma mark - textfield
-- (void)textFieldDidEndEditing:(UITextField *)textField {
-    [self endEdit];
-}
 
 
 - (void)setUnderLine_center_y:(CGFloat)underLine_center_y {
@@ -230,7 +207,7 @@
     if (!_noInputAni) {
         [self addUnderLineAnimation];
     }
-
+    
 }
 
 //添加分割线
@@ -263,7 +240,7 @@
         {
             //画字
             //字的起点
-        
+            
             CGContextRef context = UIGraphicsGetCurrentContext();
             for (NSInteger i = 0; i < textArray.count; i ++) {
                 NSString *num = textArray[i];
@@ -294,10 +271,8 @@
         default:
             break;
     }
-
+    
 }
-
-
 
 #pragma mark - 有下划线时,下划线的动画
 - (void)addUnderLineAnimation {

@@ -17,6 +17,7 @@ typedef NS_ENUM(NSInteger,CodeViewType) {
 
 //输入完成回调
 @property (nonatomic, copy) void(^EndEditBlcok)(NSString *text);
+@property (nonatomic, copy) void(^changeEditBlock)();
 
 //样式
 @property (nonatomic, assign) CodeViewType codeType;
@@ -29,6 +30,7 @@ typedef NS_ENUM(NSInteger,CodeViewType) {
 //是否需要输入之后清空，再次输入使用,默认为NO
 @property (nonatomic, assign) BOOL emptyEditEnd;
 
+
 //是否添加下划线的动画,默认NO
 @property (nonatomic, assign) BOOL underLineAnimation;
 
@@ -40,6 +42,8 @@ typedef NS_ENUM(NSInteger,CodeViewType) {
 //下划线中心点
 @property (nonatomic, assign) CGFloat underLine_center_y;
 
+@property (nonatomic, strong) NSString *text;
+
 
 - (instancetype)initWithFrame:(CGRect)frame
                           num:(NSInteger)num
@@ -48,5 +52,6 @@ typedef NS_ENUM(NSInteger,CodeViewType) {
 
 - (void)beginEdit;
 - (void)endEdit;
+- (void)emptyCodeView;
 
 @end
